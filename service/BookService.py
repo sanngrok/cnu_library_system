@@ -142,3 +142,38 @@ def book_update_yn(book_isbn, use_yn):
         curs.execute(sql)
     finally:
         conn.close()
+
+# 도서반납
+def return_books():
+    print(':: 회원번호를 입력하세요.')
+    member_num = input('>> 회원번호: ')
+    # 회원이면 1, 아니면 0
+    result = member_match(member_num)
+
+    if result == 1:  # 회원인 경우
+        print(':: 반납하고싶은 도서 ISBN을 입력하세요.')
+        book_isbn = input('>> ISBN: ')
+        count = book_yn(book_isbn, 'n')  # n = 대출이 된 도서(반납가능)
+
+        if count == 1:  # 반납 가능
+            conn = connection_db()
+            try:
+                curs = conn.cursor()
+                sql = f'''
+                        UPDATE tbl_rental SET
+                        return_at = now()
+                        WHERE book_ISBN = {book_isbn}
+                        AND member_id = '{member_num}'
+                       '''
+                curs.execute(sql)
+                book_update_yn(book_isbn, 'y')
+                print(f'#MSG: "{member_num}"회원님의 도서 "{book_isbn}" 1권을 반납하였습니다.')
+            finally:
+                conn.close()
+        else:  # 반납 불가
+            print(f'#Warning: "{book_isbn}"은 반납이 불가합니다.')
+            return
+
+    else:  # 회원이 아닌경우
+        print('#Warning: 회원이 아닙니다. 회원 등록을 먼저 해주세요.')
+        return
