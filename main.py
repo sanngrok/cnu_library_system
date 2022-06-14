@@ -42,7 +42,7 @@ if select_num == 1:  # 도서 목록
 elif select_num == 2:  # 도서 검색
     bookService.search_books()
 elif select_num == 3:  # 도서 대출
-    pass
+    bookService.rental_books()
 elif select_num == 4:  # 도서 반납
     pass
 elif select_num == 5:  # 회원 목록
